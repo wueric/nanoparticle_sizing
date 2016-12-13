@@ -30,11 +30,13 @@ plt.style.use('ggplot')
 font = {'size' : 14}
 matplotlib.rc('font', **font)
 
+BOTTOM_BAR_HEIGHT = 38
+
 ScaleDensityTuple = namedtuple('ScaleDensityTuple', ['scale', 'density'])
 
 def segment_particles_high_density (image_path, pixel_size):
     image = load(image_path)
-    image_gray = image[:-80,:]
+    image_gray = image[:-BOTTOM_BAR_HEIGHT,:]
     
     square_edges = sobel(image_gray)
     sobel_edges = square_edges / np.max(square_edges)
@@ -65,7 +67,7 @@ def segment_particles_high_density (image_path, pixel_size):
 def segment_particles_low_density (image_path, pixel_size):
 
     image = load(image_path)
-    image_gray = image[:-38,:]
+    image_gray = image[:-BOTTOM_BAR_HEIGHT,:]
 
     thresholded = image_gray > threshold_otsu(image_gray)
 
@@ -155,7 +157,7 @@ if __name__ == '__main__':
             particle_density = line[2]
 
             if not os.path.isabs(current_path):
-                current_abs_path = '{0}/{1}'.format(working_directory, current_path)
+                current_abs_path = os.path.abspath(current_path)
                 paths_to_scale[current_abs_path] = ScaleDensityTuple(sem_scale, particle_density)
             else:
                 paths_to_scale[current_path] = ScaleDensityTuple(sem_scale, particle_density)
